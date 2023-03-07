@@ -1,0 +1,39 @@
+<div id="map" class="map"></div>
+
+<p-sidebar [(visible)]="display" position="right" styleClass="p-sidebar-mg" [modal]="false">
+    <h2>Info</h2>
+    <h4>Type: {{landType}}</h4>
+    <h5>from Wikipedia: </h5>
+    <p>{{wikiContent}}</p>
+</p-sidebar>
+
+<div class="ol-unselectable ol-control layerSwitcher">
+    <p-radioButton name="groupname" value="3" label="None" [(ngModel)]="selectedValue" (click)="changeLayer()"></p-radioButton>
+    <p-radioButton name="groupname" value="1" label="First level" [(ngModel)]="selectedValue" (click)="changeLayer()"></p-radioButton>
+    <p-radioButton name="groupname" value="2" label="Second level" [(ngModel)]="selectedValue" (click)="changeLayer()"></p-radioButton>
+    <p-radioButton name="groupname" value="99" label="Notes" [(ngModel)]="selectedValue" (click)="changeLayer()"></p-radioButton>
+</div>
+
+<div *ngIf="selectedValue == 99">
+    <p-selectButton [options]="drawStatus" [(ngModel)]="selectedDrawStatus" optionLabel="name" class="ol-unselectable ol-control drawStatusSelector" optionValue="value" (click)="changeNoteInteraction()"></p-selectButton>
+</div>
+
+<p-dialog header="Please enter your note below" [(visible)]="modalVisibility" [modal]="true" [closable]="false" [resizable]="false">
+    <textarea pInputTextarea [(ngModel)]="inputText" placeholder="Notes.." rows="10" cols="60"></textarea>
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" styleClass="p-button-text" (click)="cancelNote()"></p-button>
+        <p-button label="Save" styleClass="p-button-text" (click)="saveNote()"></p-button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="Are you sure?" [(visible)]="deleteModalVisibility" [modal]="true" [closable]="false" [resizable]="false" [style]="{width: '50vw'}">
+    <div class="textbox" [innerHTML]="deleteText"></div>
+    <ng-template pTemplate="footer">
+        <p-button label="No" styleClass="p-button-text" (click)="cancelDelete()" ></p-button>
+        <p-button label="Yes" styleClass="p-button-text" (click)="delete()" ></p-button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="Note: " [(visible)]="readModalVisibility" [modal]="true" [resizable]="false" [closable]="true" [dismissableMask]="true" [style]="{width: '50vw'}">
+    <div class="textbox" [innerHTML]="readText"></div>
+</p-dialog>

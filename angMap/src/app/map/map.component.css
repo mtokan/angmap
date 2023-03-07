@@ -1,0 +1,43 @@
+#map {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.layerSwitcher{
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 180px;
+    height: 120px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 5px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgba(255, 255, 255, 1);
+    color: rgba(102, 102, 102, 1);
+    border: 0.1px;
+    border-color: rgba(102, 102, 102, 0.479);
+    border-style: solid;
+}
+
+.drawStatusSelector{
+    position: fixed;
+    bottom: 150px;
+    left: 20px;
+    font-size: 10px;
+}
+
+.textbox{
+    white-space: pre-wrap;
+}
+
+:host ::ng-deep .p-selectbutton .p-button{
+    font-size:15px;
+    padding: 11px;  
+  }

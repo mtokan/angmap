@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "angMapAPI", "angMapAPI.csproj", "{5437D44A-F519-40BB-917F-532399DAC738}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5437D44A-F519-40BB-917F-532399DAC738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5437D44A-F519-40BB-917F-532399DAC738}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5437D44A-F519-40BB-917F-532399DAC738}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5437D44A-F519-40BB-917F-532399DAC738}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D56DA2ED-7554-40CE-A7EB-7C2D145C56F9}
+	EndGlobalSection
+EndGlobal
