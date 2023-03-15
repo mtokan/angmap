@@ -1,10 +1,12 @@
 ﻿using angMapAPI.Models;
 using angMapAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace angMapAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class PointsController : ControllerBase
     {
