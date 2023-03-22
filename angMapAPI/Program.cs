@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var corsPolicy = "corsPolicy";
 
 // Add services to the container.
 builder.Services.Configure<FeaturesDatabaseSettings>(
@@ -20,6 +21,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: corsPolicy, policy => { policy.WithOrigins("http://localhost:4200").AllowAnyHeader(); });
+});
 
 builder.Services.AddAuthentication(options =>
 {
@@ -73,6 +79,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(corsPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();

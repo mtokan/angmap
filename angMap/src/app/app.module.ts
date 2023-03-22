@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,9 +15,13 @@ import {SelectButtonModule} from 'primeng/selectbutton';
 import {DialogModule} from 'primeng/dialog';
 import {InputTextModule} from 'primeng/inputtext';
 import {InputTextareaModule} from 'primeng/inputtextarea';
-import {PasswordModule} from 'primeng/password';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { LoginComponent } from './login/login.component';
+
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -33,11 +38,15 @@ import { LoginComponent } from './login/login.component';
     BrowserAnimationsModule,
     RadioButtonModule,
     FormsModule,
+    ReactiveFormsModule,
     SelectButtonModule,
     DialogModule,
     InputTextareaModule,
     InputTextModule,
-    PasswordModule
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
