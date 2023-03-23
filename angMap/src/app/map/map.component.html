@@ -24,17 +24,13 @@
     </section>
 </mat-expansion-panel>
 
-<mat-button-toggle-group [(ngModel)]="actionSelection" class="buttonToggle" (change)="changeNoteInteraction()">
+<mat-button-toggle-group *ngIf="actionPanelVisibility" [(ngModel)]="actionSelection" class="buttonToggle" (change)="changeNoteInteraction()">
     <mat-button-toggle value="create"><mat-icon>create</mat-icon></mat-button-toggle>
     <mat-divider></mat-divider>
     <mat-button-toggle value="select"><mat-icon>search</mat-icon></mat-button-toggle>
     <mat-divider></mat-divider>
     <mat-button-toggle value="delete"><mat-icon>delete</mat-icon></mat-button-toggle>
 </mat-button-toggle-group>
-
-<div *ngIf="selectedValue == 99">
-    <p-selectButton [options]="drawStatus" [(ngModel)]="selectedDrawStatus" optionLabel="name" class="ol-unselectable ol-control drawStatusSelector" optionValue="value" (click)="changeNoteInteraction()"></p-selectButton>
-</div>
 
 <p-dialog header="Please enter your note below" [(visible)]="modalVisibility" [modal]="true" [closable]="false" [resizable]="false">
     <textarea pInputTextarea [(ngModel)]="inputText" placeholder="Notes.." rows="10" cols="60"></textarea>

@@ -3,7 +3,7 @@ import {FormBuilder} from '@angular/forms';
 import { Feature, Map } from 'ol';
 import { OSM } from 'ol/source';
 import {GeoJSON, WFS} from 'ol/format.js';
-import { Circle, Fill ,Stroke, Style} from 'ol/style.js';
+import { Circle, Fill ,Stroke, Style, Text} from 'ol/style.js';
 import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector.js';
@@ -14,6 +14,7 @@ import { MapService } from '../services/map.service';
 import { PrimeNGConfig } from 'primeng/api'
 import {getCenter, buffer, Extent} from 'ol/extent'
 import Interaction from 'ol/interaction/Interaction';
+import Layer from 'ol/layer/Layer';
 
 @Component({
   selector: 'app-map',
@@ -49,6 +50,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   public interactions: Interaction[] = []
   public readText!: string
   public actionSelection!: string
+  public actionPanelVisibility = false
   public form = this.formBuilder.group({
     firstLevel: true,
     secondLevel: false,
@@ -69,7 +71,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.initializeInteractions();
     this.setInteractionEventHandlers();
 
-    this.changeInteraction(this.selectInteraction);
+    this.changeInteraction(this.readInteraction);
   }
 
   public changeLayer(){
@@ -79,6 +81,11 @@ export class MapComponent implements OnInit, AfterViewInit {
         x.setVisible(a);
       }
     });
+    if(this.form.controls.points.value){
+      this.actionPanelVisibility = true;
+    } else {
+      this.actionPanelVisibility = false;
+    }
   }
 
   // public changeLayer() {
@@ -99,7 +106,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   // }
 
   public changeNoteInteraction(){
-    debugger
     if (this.actionSelection === 'create') {
       this.changeInteraction(this.drawInteraction);
     } else if(this.actionSelection === 'delete'){
@@ -135,6 +141,48 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.deleteInteraction.getFeatures().clear();
   }
 
+  firstLevelStyleFunction(feature:any){
+    return new Style({
+        stroke: new Stroke({
+          color: '#5C6BC0',
+          width: 2
+        }),
+        fill: new Fill({
+          color: 'rgba(159, 168, 218, 0.5)'
+        }),
+        text: new Text({
+          text: `Name: ${feature.get('name_1')}
+Type: ${feature.get('type_1')}`,
+          placement: 'point',
+          fill: new Fill({
+            color:'#303F9F'
+          }),
+          font: 'Bold 15px / 1 Verdana',
+        })
+      })
+  }
+
+  secondLevelStyleFunction(feature:any){
+    return new Style({
+        stroke: new Stroke({
+          color: '#EC407A',
+          width: 2
+        }),
+        fill: new Fill({
+          color: 'rgba(244, 143, 177, 0.5)'
+        }),
+        text: new Text({
+          text: `Name: ${feature.get('name_2')}
+Type: ${feature.get('type_2')}`,
+          placement: 'point',
+          fill: new Fill({
+            color:'#C2185B'
+          }),
+          font: 'Bold 15px / 1 Verdana',
+        })
+      })
+  }
+
   public initializeLayers(){
     this.firstLevelVectorSource = new VectorSource();
     this.secondLevelVectorSource = new VectorSource();
@@ -162,30 +210,14 @@ export class MapComponent implements OnInit, AfterViewInit {
       properties: {'layerId': 'firstLevel'},
       source: this.firstLevelVectorSource,
       visible: true,
-      style: new Style({
-        stroke: new Stroke({
-          color:'rgba(0, 0, 255, 1.0)',
-          width: 2
-        }),
-        fill: new Fill({
-          color:'rgba(0, 0, 255, 0.2)'
-        })
-      })
+      style: this.firstLevelStyleFunction
     });
 
     this.secondLevelVectorLayer = new VectorLayer({
       properties: {'layerId': 'secondLevel'},
       source: this.secondLevelVectorSource,
       visible: false,
-      style: new Style({
-        stroke: new Stroke({
-          color:'rgba(0, 0, 255, 1.0)',
-          width: 2
-        }),
-        fill: new Fill({
-          color:'rgba(0, 0, 255, 0.2)'
-        })
-      })
+      style: this.secondLevelStyleFunction
     });
   }
 
@@ -223,15 +255,15 @@ export class MapComponent implements OnInit, AfterViewInit {
     })
   }
 
-  private initializeInteractions(){
-    this.selectInteraction = new Select({
-      style: new Style({
-        fill: new Fill({
-          color:'rgba(0, 0, 255, 0.8)'
-        })
-      })
-    });
+  private selectInteractionFilter(layer:Layer){
+    if(layer.getProperties()['layerId'] == 'points'){
+      return true;
+    } else {
+      return false;
+    }
+  }
 
+  private initializeInteractions(){
     this.drawInteraction = new Draw({
       source: this.pointVectorSource,
       type: 'Point'
@@ -239,34 +271,14 @@ export class MapComponent implements OnInit, AfterViewInit {
 
     this.deleteInteraction = new Select();
 
-    this.readInteraction = new Select();
+    this.readInteraction = new Select({
+      layers: this.selectInteractionFilter
+    });
 
-    this.interactions.push(this.selectInteraction,this.drawInteraction,this.deleteInteraction,this.readInteraction);
+    this.interactions.push(this.drawInteraction,this.deleteInteraction,this.readInteraction);
   }
 
   private setInteractionEventHandlers(){
-    this.selectInteraction.on('select', e => {
-      if(this.selectedValue == 1 && e.selected.length != 0){
-        this.mapService.getInfo(e.selected[0].getProperties()['name_1'])
-          .subscribe(res => {
-            this.landType = e.selected[0].getProperties()['type_1'];
-            let a = res as any
-            this.wikiContent = a.query.pages[0].extract;
-          })
-          this.display = true;
-      } else if (this.selectedValue == 2 && e.selected.length != 0){
-        this.mapService.getInfo(e.selected[0].getProperties()['name_2'])
-        .subscribe(res => {
-          this.landType = e.selected[0].getProperties()['type_2'];
-          let a = res as any
-          this.wikiContent = a.query.pages[0].extract;
-        })
-        this.display = true;
-      } else {
-        this.display = false;
-      }
-    });
-    
     this.drawInteraction.on('drawend', e => {
       this.addedNoteFeature = e.feature
       this.modalVisibility = true
@@ -282,7 +294,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
 
     this.readInteraction.on('select', e => {
-      if (this.selectedValue == 99 && e.selected.length != 0){
+      if (this.actionPanelVisibility && e.selected.length != 0){
         this.readText = e.selected[0].getProperties()['text'];
         this.readModalVisibility = true;
         this.readInteraction.getFeatures().clear();
