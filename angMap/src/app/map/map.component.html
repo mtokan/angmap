@@ -7,12 +7,30 @@
     <p>{{wikiContent}}</p>
 </p-sidebar>
 
-<div class="ol-unselectable ol-control layerSwitcher">
-    <p-radioButton name="groupname" value="3" label="None" [(ngModel)]="selectedValue" (click)="changeLayer()"></p-radioButton>
-    <p-radioButton name="groupname" value="1" label="First level" [(ngModel)]="selectedValue" (click)="changeLayer()"></p-radioButton>
-    <p-radioButton name="groupname" value="2" label="Second level" [(ngModel)]="selectedValue" (click)="changeLayer()"></p-radioButton>
-    <p-radioButton name="groupname" value="99" label="Notes" [(ngModel)]="selectedValue" (click)="changeLayer()"></p-radioButton>
-</div>
+<mat-expansion-panel class="layerSelector">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Layers
+    </mat-panel-title>
+    <mat-panel-description>
+      <mat-icon>map</mat-icon>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+    <mat-divider></mat-divider>
+    <section [formGroup]="form">
+        <mat-checkbox formControlName="firstLevel" (ngModelChange)="changeLayer()">First Level</mat-checkbox>
+        <mat-checkbox formControlName="secondLevel" (ngModelChange)="changeLayer()">Second Level</mat-checkbox>
+        <mat-checkbox formControlName="points" (ngModelChange)="changeLayer()">Points</mat-checkbox>
+    </section>
+</mat-expansion-panel>
+
+<mat-button-toggle-group [(ngModel)]="actionSelection" class="buttonToggle" (change)="changeNoteInteraction()">
+    <mat-button-toggle value="create"><mat-icon>create</mat-icon></mat-button-toggle>
+    <mat-divider></mat-divider>
+    <mat-button-toggle value="select"><mat-icon>search</mat-icon></mat-button-toggle>
+    <mat-divider></mat-divider>
+    <mat-button-toggle value="delete"><mat-icon>delete</mat-icon></mat-button-toggle>
+</mat-button-toggle-group>
 
 <div *ngIf="selectedValue == 99">
     <p-selectButton [options]="drawStatus" [(ngModel)]="selectedDrawStatus" optionLabel="name" class="ol-unselectable ol-control drawStatusSelector" optionValue="value" (click)="changeNoteInteraction()"></p-selectButton>

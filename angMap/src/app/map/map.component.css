@@ -6,24 +6,39 @@
     right: 0;
 }
 
-.layerSwitcher{
+.layerSelector{
+    width: 200px;
     position: fixed;
-    bottom: 20px;
     left: 20px;
-    display: flex;
+    top: 20px;
+}
+
+.buttonToggle{
+    left: 20px;
+    top: 40vh;
+}
+
+.mat-button-toggle-standalone, .mat-button-toggle-group{
     flex-direction: column;
-    width: 180px;
-    height: 120px;
+}
+
+.mat-expansion-panel-header-description {
+    justify-content: end;
+    align-items: center;
+}
+
+.mat-expansion-panel-header.mat-expanded{
+    height: 48px;
+}
+
+.mat-mdc-checkbox{
+    height: 30px;
+}
+
+:host ::ng-deep .mat-expansion-panel-body {
+    display: flex !important ;
+    flex-direction: column;
     flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 5px;
-    font-weight: bold;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: rgba(255, 255, 255, 1);
-    color: rgba(102, 102, 102, 1);
-    border: 0.1px;
-    border-color: rgba(102, 102, 102, 0.479);
-    border-style: solid;
 }
 
 .drawStatusSelector{

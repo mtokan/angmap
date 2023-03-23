@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import {FormBuilder} from '@angular/forms';
 import { Feature, Map } from 'ol';
 import { OSM } from 'ol/source';
 import {GeoJSON, WFS} from 'ol/format.js';
@@ -47,8 +48,14 @@ export class MapComponent implements OnInit, AfterViewInit {
   public deletedFeature!: Feature
   public interactions: Interaction[] = []
   public readText!: string
+  public actionSelection!: string
+  public form = this.formBuilder.group({
+    firstLevel: true,
+    secondLevel: false,
+    points: false,
+  })
 
-  constructor(private mapService: MapService,private primengConfig: PrimeNGConfig ) {}
+  constructor(private mapService: MapService,private primengConfig: PrimeNGConfig,private formBuilder: FormBuilder ) {}
 
   ngOnInit(): void {
     this.primengConfig.ripple = true;
@@ -65,29 +72,39 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.changeInteraction(this.selectInteraction);
   }
 
-  public changeLayer() {
+  public changeLayer(){
     this.map.getLayers().getArray().map(x => {
-      if(x.getProperties()['layerId'] == this.selectedValue || x.getProperties()['layerId'] == 0){
-        x.setVisible(true);
-      } else {
-        x.setVisible(false);
+      if (x.getProperties()['layerId'] != 0  ) {
+        let a = this.form.get(x.getProperties()['layerId'])?.value as boolean;
+        x.setVisible(a);
       }
     });
-    if(this.selectedValue == 99){
-      this.selectedDrawStatus = 'r';
-      this.changeInteraction(this.readInteraction);
-    } else {
-      this.selectedDrawStatus = '';
-      this.changeInteraction(this.selectInteraction);
-    }
   }
 
+  // public changeLayer() {
+  //   this.map.getLayers().getArray().map(x => {
+  //     if(x.getProperties()['layerId'] == this.selectedValue || x.getProperties()['layerId'] == 0){
+  //       x.setVisible(true);
+  //     } else {
+  //       x.setVisible(false);
+  //     }
+  //   });
+  //   if(this.selectedValue == 99){
+  //     this.selectedDrawStatus = 'r';
+  //     this.changeInteraction(this.readInteraction);
+  //   } else {
+  //     this.selectedDrawStatus = '';
+  //     this.changeInteraction(this.selectInteraction);
+  //   }
+  // }
+
   public changeNoteInteraction(){
-    if (this.selectedDrawStatus === 'w') {
+    debugger
+    if (this.actionSelection === 'create') {
       this.changeInteraction(this.drawInteraction);
-    } else if(this.selectedDrawStatus === 'd'){
+    } else if(this.actionSelection === 'delete'){
       this.changeInteraction(this.deleteInteraction);
-    } else if (this.selectedDrawStatus === 'r'){
+    } else if (this.actionSelection === 'select'){
       this.changeInteraction(this.readInteraction);
     }
   }
@@ -124,7 +141,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     this.pointVectorSource = new VectorSource();
 
     this.pointVectorLayer = new VectorLayer({
-      properties: {'layerId': 99},
+      properties: {'layerId': 'points'},
       source: this.pointVectorSource,
       visible: true,
       style: new Style({
@@ -142,7 +159,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
     
     this.firstLevelVectorLayer = new VectorLayer({
-      properties: {'layerId': 1},
+      properties: {'layerId': 'firstLevel'},
       source: this.firstLevelVectorSource,
       visible: true,
       style: new Style({
@@ -157,7 +174,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
 
     this.secondLevelVectorLayer = new VectorLayer({
-      properties: {'layerId': 2},
+      properties: {'layerId': 'secondLevel'},
       source: this.secondLevelVectorSource,
       visible: false,
       style: new Style({
