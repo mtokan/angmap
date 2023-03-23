@@ -11,8 +11,8 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient) { }
 
-  login(username:string, password: string){
-    return this.http.post(`${this.authUrl}/api/authenticate/login`,{username, password}).pipe(map( user => {
+  login(email:string, password: string){
+    return this.http.post(`${this.authUrl}/api/authenticate/login`,{email, password}).pipe(map( user => {
       localStorage.setItem('user', JSON.stringify(user))
       return user;
     }));

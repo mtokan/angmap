@@ -12,7 +12,7 @@ export class LoginComponent implements OnInit {
   public hide = true;
 
   public form: FormGroup = new FormGroup({
-    username: new FormControl(''),
+    email: new FormControl(''),
     password: new FormControl('')
   });
   public submitted = false;
@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
-      username: ['',[Validators.required]],
+      email: ['',[Validators.required, Validators.email]],
       password: ['',[Validators.required]]
     });
   }
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.authenticationService.login(this.form.value['username'],this.form.value['password']).subscribe(res => {
+    this.authenticationService.login(this.form.value['email'],this.form.value['password']).subscribe(res => {
       this.router.navigate(['/']);
     });
   }

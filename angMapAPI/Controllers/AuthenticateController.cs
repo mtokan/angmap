@@ -29,7 +29,7 @@ namespace angMapAPI.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.Username);
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password)) 
             {
@@ -37,7 +37,7 @@ namespace angMapAPI.Controllers
 
                 var authClaims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
@@ -57,7 +57,7 @@ namespace angMapAPI.Controllers
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var userExists = await _userManager.FindByNameAsync(model.Username);
+            var userExists = await _userManager.FindByEmailAsync(model.Email);
 
             if (userExists != null)
                 return StatusCode(StatusCodes.Status409Conflict, new Response { Status = "Error", Message = "User already exists!" });
@@ -66,7 +66,7 @@ namespace angMapAPI.Controllers
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                UserName = Guid.NewGuid().ToString(),
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
