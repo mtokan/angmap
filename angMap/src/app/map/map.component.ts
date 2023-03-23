@@ -191,7 +191,8 @@ export class MapComponent implements OnInit, AfterViewInit {
         extent: buffer(extent,100000),
         showFullExtent:true,
         zoom:1
-      })
+      }),
+      controls:[]
     });
   }
 

@@ -1,0 +1,46 @@
+.container{
+    height: 100vh;
+    width: 100vw;
+    background: rgb(121,134,203);
+    background: linear-gradient(135deg, rgba(121,134,203,1) 0%, rgba(63,81,181,1) 50%, rgba(48,63,159,1) 100%);
+    display: grid;
+}
+
+.box{
+    height: 500px;
+    width: 400px;
+    background-color: white;
+    place-self: center;
+    border-radius: 15px;
+    display: grid;
+    grid-template-rows: [first] 25% [second] 20% [third] 20% [fourth] 35%;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.userNameInput{
+    grid-row: second;
+    place-self: center;
+}
+
+.passwordInput{
+    grid-row: third;
+    place-self: center;
+}
+
+.loginButton{
+    grid-row: fourth;
+    place-self: center;
+}
+
+.header{
+    grid-row: first;
+    place-self: center;
+}
+
+.header h1{
+    background: -webkit-linear-gradient(#7986CB, #283593);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 40px;
+}
