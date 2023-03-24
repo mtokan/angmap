@@ -49,7 +49,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   public deletedFeature!: Feature
   public interactions: Interaction[] = []
   public readText!: string
-  public actionSelection!: string
+  public actionSelection: string = 'select';
   public actionPanelVisibility = false
   public form = this.formBuilder.group({
     firstLevel: true,
@@ -85,6 +85,8 @@ export class MapComponent implements OnInit, AfterViewInit {
       this.actionPanelVisibility = true;
     } else {
       this.actionPanelVisibility = false;
+      this.changeInteraction(this.readInteraction);
+      this.actionSelection = 'select'
     }
   }
 
