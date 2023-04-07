@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin, Observable } from 'rxjs';
-import { wikiResponse } from '../models/wikiResponse';
+import { forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +15,5 @@ export class MapService {
     // return this.http.get('assets/firstLevel.json');
 
     return forkJoin([this.http.get('assets/firstLevel.json'),this.http.get('assets/secondLevel.json')]);
-  }
-
-  getInfo(key:any) {
-    return this.http.get(`https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exsentences=10&exlimit=1&titles=${ key }&explaintext=1&formatversion=2&format=json&redirects=`).pipe()
   }
 }

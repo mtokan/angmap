@@ -1,0 +1,29 @@
+.box{
+    height: 600px;
+    width: 600px;
+    display: grid;
+    grid-template-rows: [firstR] 2% [secondR] 15% [thirdR] 15% [fourthR] 66% [fifthR] 2% [endR];
+    grid-template-columns: [firstC] 2% [secondC] 96% [thirdC] 2% [endC];
+    overflow-x: hidden;
+}
+
+.title{
+    grid-row: secondR;
+    grid-column: secondC;
+}
+
+.date{
+    grid-row: thirdR;
+    grid-column: secondC;
+}
+
+.note{
+    grid-row: fourthR;
+    grid-column: secondC;
+    overflow-wrap: break-word;
+}
+
+.note p{
+    white-space: pre-line;
+    padding-bottom: 2%;
+}

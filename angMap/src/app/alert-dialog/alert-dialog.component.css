@@ -1,0 +1,29 @@
+.box{
+    height: 150px;
+    width: 420px;
+    display: grid;
+    grid-template-rows: [first] 50% [second] 50% [last];
+    grid-template-columns: [first] 50% [second] 50% [last];
+}
+
+.text{
+    grid-column-start: first;
+    grid-column-end: last;
+    grid-row: first;
+    justify-self: start;
+    align-self: center;
+    padding-left: 3%;
+    padding-top: 3%;
+}
+
+.saveButton{
+    grid-row: second;
+    grid-column: second;
+    place-self: center;
+}
+
+.cancelButton{
+    grid-column: first;
+    grid-row: second;
+    place-self: center;
+}
