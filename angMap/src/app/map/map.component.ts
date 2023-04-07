@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import {FormBuilder} from '@angular/forms';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import { Feature, Map } from 'ol';
 import { OSM } from 'ol/source';
 import {GeoJSON, WFS} from 'ol/format.js';
@@ -15,6 +15,10 @@ import { PrimeNGConfig } from 'primeng/api'
 import {getCenter, buffer, Extent} from 'ol/extent'
 import Interaction from 'ol/interaction/Interaction';
 import Layer from 'ol/layer/Layer';
+import {MatDialog} from '@angular/material/dialog';
+import { SaveNoteDialogComponent } from '../save-note-dialog/save-note-dialog.component';
+import { ReadNoteDialogComponent } from '../read-note-dialog/read-note-dialog.component';
+import { AlertDialogComponent } from '../alert-dialog/alert-dialog.component';
 
 @Component({
   selector: 'app-map',
@@ -33,22 +37,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   public drawInteraction!: Draw
   public deleteInteraction!: Select
   public readInteraction!: Select
-  public display!: boolean
-  public wikiContent!:string
-  public landType!:string
-  public selectedValue = 1;
-  public selectedFeatures!:any
-  public drawStatus = [{name: 'write', value: 'w'},{name: 'read', value: 'r'},{name: 'delete', value: 'd'}]
-  public selectedDrawStatus!:string
-  public modalVisibility = false
-  public deleteModalVisibility = false
-  public readModalVisibility = false
-  public inputText!:string
-  public deleteText!:string
-  public addedNoteFeature!: Feature
-  public deletedFeature!: Feature
   public interactions: Interaction[] = []
-  public readText!: string
   public actionSelection: string = 'select';
   public actionPanelVisibility = false
   public form = this.formBuilder.group({
@@ -57,7 +46,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     points: false,
   })
 
-  constructor(private mapService: MapService,private primengConfig: PrimeNGConfig,private formBuilder: FormBuilder ) {}
+  constructor(private mapService: MapService,private primengConfig: PrimeNGConfig,private formBuilder: FormBuilder,public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.primengConfig.ripple = true;
@@ -90,23 +79,6 @@ export class MapComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // public changeLayer() {
-  //   this.map.getLayers().getArray().map(x => {
-  //     if(x.getProperties()['layerId'] == this.selectedValue || x.getProperties()['layerId'] == 0){
-  //       x.setVisible(true);
-  //     } else {
-  //       x.setVisible(false);
-  //     }
-  //   });
-  //   if(this.selectedValue == 99){
-  //     this.selectedDrawStatus = 'r';
-  //     this.changeInteraction(this.readInteraction);
-  //   } else {
-  //     this.selectedDrawStatus = '';
-  //     this.changeInteraction(this.selectInteraction);
-  //   }
-  // }
-
   public changeNoteInteraction(){
     if (this.actionSelection === 'create') {
       this.changeInteraction(this.drawInteraction);
@@ -115,32 +87,6 @@ export class MapComponent implements OnInit, AfterViewInit {
     } else if (this.actionSelection === 'select'){
       this.changeInteraction(this.readInteraction);
     }
-  }
-
-  public saveNote(){
-    this.addedNoteFeature.setProperties({'text': this.inputText});
-    this.inputText = '';
-    this.modalVisibility = false
-    let a = new GeoJSON();
-    this.pointVectorSource.getFeatures().forEach(x => {console.log(a.writeFeature(x))});
-  }
-
-  public cancelNote(){
-    this.pointVectorSource.removeFeature(this.addedNoteFeature);
-    this.inputText = '';
-    this.modalVisibility = false
-  }
-
-  public delete(){
-    this.pointVectorSource.removeFeature(this.deletedFeature);
-    this.deleteModalVisibility = false;
-    this.deleteText = '';
-  }
-
-  public cancelDelete(){
-    this.deleteText = '';
-    this.deleteModalVisibility = false;
-    this.deleteInteraction.getFeatures().clear();
   }
 
   firstLevelStyleFunction(feature:any){
@@ -282,24 +228,35 @@ Type: ${feature.get('type_2')}`,
 
   private setInteractionEventHandlers(){
     this.drawInteraction.on('drawend', e => {
-      this.addedNoteFeature = e.feature
-      this.modalVisibility = true
+      const dialogRef = this.dialog.open<SaveNoteDialogComponent,any,FormGroup>(SaveNoteDialogComponent, {disableClose: true});
+      dialogRef.afterClosed().subscribe(result => {
+        if(result){
+          e.feature.setProperties({'title':result.value['title'],'date':result.value['date'],'note':result.value['note']});
+        } else {
+          this.pointVectorSource.removeFeature(e.feature);
+        }
+      })
     });
     
     this.deleteInteraction.on('select', e => {
       if(e.selected.length != 0){
-      let text = e.selected[0].getProperties() as any;
-      this.deleteText = text.text
-      this.deleteModalVisibility = true
-      this.deletedFeature = e.selected[0];
-      }
+      const title = e.selected[0].getProperties()['title'];
+      const dialogRef = this.dialog.open<AlertDialogComponent,string,boolean>(AlertDialogComponent,{disableClose: true,data: `Are you sure you want to delete this note?`});
+      dialogRef.afterClosed().subscribe(result => {
+        if(result){
+          this.pointVectorSource.removeFeature(e.selected[0]);
+        }
+      })}
     });
 
     this.readInteraction.on('select', e => {
-      if (this.actionPanelVisibility && e.selected.length != 0){
-        this.readText = e.selected[0].getProperties()['text'];
-        this.readModalVisibility = true;
-        this.readInteraction.getFeatures().clear();
+      if (e.selected.length != 0){
+        const _title = e.selected[0].getProperties()['title'];
+        const _date = e.selected[0].getProperties()['date'];
+        const _note = e.selected[0].getProperties()['note'];
+        
+        const dialogRef = this.dialog.open(ReadNoteDialogComponent, {data: {title: _title, date: new Date(_date).toLocaleDateString(), note: _note}});
+        dialogRef.afterClosed().subscribe(result => this.readInteraction.getFeatures().clear());
       }
     });
   }

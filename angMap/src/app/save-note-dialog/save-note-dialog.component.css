@@ -1,0 +1,57 @@
+.box{
+    height: 600px;
+    width: 600px;
+    background-color: white;
+    place-self: center;
+    border-radius: 15px;
+    display: grid;
+    grid-template-rows: [first] 25% [second] 25% [third] 25% [fourth] 25%;
+    grid-template-columns: [firstC] 25% [secondC] 25% [thirdC] 25% [fourthC] 25% [endC];
+    /* box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px; */
+}
+
+.titleInput{
+    grid-row: first;
+    grid-column-start: firstC;
+    grid-column-end: thirdC;
+    place-self: center;
+}
+
+.dateInput{
+    grid-row: first;
+    grid-column-start: thirdC;
+    grid-column-end: endC;
+    place-self: center;
+}
+
+.saveButton{
+    grid-row: fourth;
+    grid-column-start: fourthC;
+    grid-column-end: endC;
+    place-self: center;
+}
+
+.cancelButton{
+    grid-row: fourth;
+    grid-column-start: thirdC;
+    grid-column-end: fourthC;
+    align-self: center;
+    justify-self: end;
+}
+
+.textArea{
+    grid-row-start: second;
+    grid-row-end: fourth;
+    grid-column-start: firstC;
+    grid-column-end: endC;
+    place-self: center;
+}
+
+.fullWidth{
+    width: 550px;
+    height: 320px;
+}
+
+textarea{
+    resize: none;
+}
