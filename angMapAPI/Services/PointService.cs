@@ -17,8 +17,8 @@ namespace angMapAPI.Services
             _pointsColleciton = mongoDatabase.GetCollection<Point>(featuresDatabaseSettings.Value.PointsCollectionName);
         }
 
-        public async Task<List<Point>> GetAsync() =>
-            await _pointsColleciton.Find(_ =>  true).ToListAsync();
+        public async Task<List<Point>> GetAsync(Guid id) =>
+            await _pointsColleciton.Find(point =>  point.UserId == id).ToListAsync();
 
         public async Task CreateAsync(Point newPoint) =>
             await _pointsColleciton.InsertOneAsync(newPoint);

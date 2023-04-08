@@ -232,6 +232,9 @@ Type: ${feature.get('type_2')}`,
       dialogRef.afterClosed().subscribe(result => {
         if(result){
           e.feature.setProperties({'title':result.value['title'],'date':result.value['date'],'note':result.value['note']});
+          let a = new GeoJSON();
+          let json = a.writeFeature(e.feature);
+          this.mapService.saveNote(json).subscribe(x => {});
         } else {
           this.pointVectorSource.removeFeature(e.feature);
         }

@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
-
+  private authUrl = environment.authenticationServer
+  
   constructor(private http: HttpClient) { }
 
   getFeatures() {
@@ -15,5 +17,9 @@ export class MapService {
     // return this.http.get('assets/firstLevel.json');
 
     return forkJoin([this.http.get('assets/firstLevel.json'),this.http.get('assets/secondLevel.json')]);
+  }
+
+  saveNote(json: string) {
+    return this.http.post(`${this.authUrl}/api/Points`,json);
   }
 }

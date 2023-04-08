@@ -2,6 +2,8 @@
 using angMapAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson.IO;
+using System.Security.Claims;
 
 namespace angMapAPI.Controllers
 {
@@ -15,14 +17,23 @@ namespace angMapAPI.Controllers
         public PointsController(PointService pointService) => _pointService = pointService;
 
         [HttpGet]
-        public async Task<List<Point>> Get() => await _pointService.GetAsync();
+        public async Task<List<Point>> GetAll()
+        {
+
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Point newPoint)
+        public async Task<IActionResult> Create(string json)
         {
-            await _pointService.CreateAsync(newPoint);
+            Point point = new Point()
+            {
+                Json = json,
+                UserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))
+            };
+            
+            await _pointService.CreateAsync(point);
 
-            return CreatedAtAction(nameof(Get), new { id = newPoint.Id }, newPoint);
+            return Ok();
         }
     }
 }
