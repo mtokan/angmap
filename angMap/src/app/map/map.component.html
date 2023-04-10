@@ -1,0 +1,24 @@
+<div id="map" class="map"></div>
+
+<mat-expansion-panel class="layerSelector">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Layers
+    </mat-panel-title>
+    <mat-panel-description>
+      <mat-icon>map</mat-icon>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+    <mat-divider></mat-divider>
+    <section [formGroup]="form">
+        <mat-checkbox formControlName="firstLevel" (ngModelChange)="changeLayer()">First Level</mat-checkbox>
+        <mat-checkbox formControlName="secondLevel" (ngModelChange)="changeLayer()">Second Level</mat-checkbox>
+        <mat-checkbox formControlName="points" (ngModelChange)="changeLayer()">Points</mat-checkbox>
+    </section>
+</mat-expansion-panel>
+
+<mat-button-toggle-group *ngIf="actionPanelVisibility" [(ngModel)]="actionSelection" class="buttonToggle" (change)="changeNoteInteraction()" vertical="true">
+    <mat-button-toggle value="create"><mat-icon>create</mat-icon></mat-button-toggle>
+    <mat-button-toggle value="select"><mat-icon>search</mat-icon></mat-button-toggle>
+    <mat-button-toggle value="delete"><mat-icon>delete</mat-icon></mat-button-toggle>
+</mat-button-toggle-group>

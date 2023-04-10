@@ -1,0 +1,61 @@
+#map {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.layerSelector{
+    width: 200px;
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.buttonToggle{
+    left: 20px;
+    top: 40vh;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.mat-button-toggle-checked{
+    background-color: #ff4081 !important;
+    color: #ffff;
+}
+
+.mat-expansion-panel-header-description {
+    justify-content: end;
+    align-items: center;
+}
+
+.mat-expansion-panel-header.mat-expanded{
+    height: 48px;
+}
+
+.mat-mdc-checkbox{
+    height: 30px;
+}
+
+:host ::ng-deep .mat-expansion-panel-body {
+    display: flex !important ;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.drawStatusSelector{
+    position: fixed;
+    bottom: 150px;
+    left: 20px;
+    font-size: 10px;
+}
+
+.textbox{
+    white-space: pre-wrap;
+}
+
+:host ::ng-deep .p-selectbutton .p-button{
+    font-size:15px;
+    padding: 11px;  
+  }
