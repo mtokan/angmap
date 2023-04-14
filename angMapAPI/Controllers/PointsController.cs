@@ -2,7 +2,6 @@
 using angMapAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson.IO;
 using System.Security.Claims;
 
 namespace angMapAPI.Controllers
@@ -19,19 +18,29 @@ namespace angMapAPI.Controllers
         [HttpGet]
         public async Task<List<Point>> GetAll()
         {
-
+            Guid UserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            return await _pointService.GetAsync(UserId);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(string json)
+        public async Task<IActionResult> Create([FromBody] string json)
         {
-            Point point = new Point()
+            Point point = new()
             {
                 Json = json,
                 UserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))
             };
             
             await _pointService.CreateAsync(point);
+
+            return Ok(new {id = point.Id});
+        }
+
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<IActionResult> Delete([FromBody] string id)
+        {
+            await _pointService.RemoveAsync(id);
 
             return Ok();
         }

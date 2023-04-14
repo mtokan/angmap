@@ -19,6 +19,7 @@ import {MatDialog} from '@angular/material/dialog';
 import { SaveNoteDialogComponent } from '../save-note-dialog/save-note-dialog.component';
 import { ReadNoteDialogComponent } from '../read-note-dialog/read-note-dialog.component';
 import { AlertDialogComponent } from '../alert-dialog/alert-dialog.component';
+import { Point } from 'ol/geom';
 
 @Component({
   selector: 'app-map',
@@ -56,7 +57,9 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
 
+
     this.getAdministrativeFeatures();
+    this.getNoteFeatures();
     this.initializeInteractions();
     this.setInteractionEventHandlers();
 
@@ -139,7 +142,7 @@ Type: ${feature.get('type_2')}`,
     this.pointVectorLayer = new VectorLayer({
       properties: {'layerId': 'points'},
       source: this.pointVectorSource,
-      visible: true,
+      visible: false,
       style: new Style({
         image: new Circle({
           radius: 7,
@@ -203,6 +206,15 @@ Type: ${feature.get('type_2')}`,
     })
   }
 
+  private getNoteFeatures(){
+    this.mapService.getNotes().subscribe(result => {
+      let geoJsonFactory = new GeoJSON();
+      result.forEach(feature => {
+        this.pointVectorSource.addFeature(geoJsonFactory.readFeature(feature));
+      })
+    })
+  }
+
   private selectInteractionFilter(layer:Layer){
     if(layer.getProperties()['layerId'] == 'points'){
       return true;
@@ -217,7 +229,9 @@ Type: ${feature.get('type_2')}`,
       type: 'Point'
     });
 
-    this.deleteInteraction = new Select();
+    this.deleteInteraction = new Select({
+      layers: this.selectInteractionFilter
+    });
 
     this.readInteraction = new Select({
       layers: this.selectInteractionFilter
@@ -231,12 +245,18 @@ Type: ${feature.get('type_2')}`,
       const dialogRef = this.dialog.open<SaveNoteDialogComponent,any,FormGroup>(SaveNoteDialogComponent, {disableClose: true});
       dialogRef.afterClosed().subscribe(result => {
         if(result){
-          e.feature.setProperties({'title':result.value['title'],'date':result.value['date'],'note':result.value['note']});
-          let a = new GeoJSON();
-          let json = a.writeFeature(e.feature);
-          this.mapService.saveNote(json).subscribe(x => {});
-        } else {
+          let geoJsonFactory = new GeoJSON();
+          let createRequest = {
+            geometry: JSON.parse(geoJsonFactory.writeGeometry(e.feature.getGeometry()!)),
+            title: result.value['title'],
+            date: result.value['date'],
+            note: result.value['note']
+          }
           this.pointVectorSource.removeFeature(e.feature);
+          this.mapService.saveNote(createRequest).subscribe(saveResult => {
+            e.feature.setProperties({'id':saveResult});
+            this.pointVectorSource.addFeature(geoJsonFactory.readFeature(saveResult));
+          });
         }
       })
     });
@@ -247,7 +267,9 @@ Type: ${feature.get('type_2')}`,
       const dialogRef = this.dialog.open<AlertDialogComponent,string,boolean>(AlertDialogComponent,{disableClose: true,data: `Are you sure you want to delete this note?`});
       dialogRef.afterClosed().subscribe(result => {
         if(result){
-          this.pointVectorSource.removeFeature(e.selected[0]);
+          this.mapService.deleteNote(e.selected[0].getProperties()['id']).subscribe( deleteResult => {
+            this.pointVectorSource.removeFeature(e.selected[0]);
+          })
         }
       })}
     });

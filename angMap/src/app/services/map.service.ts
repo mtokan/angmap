@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, forkJoin } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Point } from '../models/point';
+import { SaveResponse } from '../models/saveResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,21 @@ export class MapService {
     return forkJoin([this.http.get('assets/firstLevel.json'),this.http.get('assets/secondLevel.json')]);
   }
 
-  saveNote(json: string) {
-    return this.http.post(`${this.authUrl}/api/Points`,json);
+  saveNote(json: object){
+    // let str = JSON.stringify(json);
+    let postHeaders = new HttpHeaders();
+    postHeaders = postHeaders.set('Content-Type','application/json')
+    return this.http.post(`${this.authUrl}/api/Note`, json, {headers:postHeaders});
+  }
+
+  getNotes():Observable<Array<any>>{
+    return this.http.get<Array<any>>(`${this.authUrl}/api/Note/all`);
+  }
+
+  deleteNote(id: string){
+    debugger
+    let postHeaders = new HttpHeaders();
+    postHeaders = postHeaders.set('Content-Type','application/json')
+    return this.http.request('delete',`${this.authUrl}/api/Note`,{body: {id:id},headers:postHeaders});
   }
 }
