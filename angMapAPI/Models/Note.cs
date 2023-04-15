@@ -1,15 +1,14 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Driver.GeoJsonObjectModel;
 
 namespace angMapAPI.Models
 {
-    public class Point
+    public class Note
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
         public Guid UserId { get; set; }
-        public string Json { get; set; } = null!;
+        public Feature? Feature { get; set; }
     }
 }

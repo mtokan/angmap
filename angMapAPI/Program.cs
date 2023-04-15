@@ -1,5 +1,6 @@
 using angMapAPI.Auth;
 using angMapAPI.Models;
+using angMapAPI.Repositories;
 using angMapAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -27,7 +28,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: corsPolicy, policy => { policy.WithOrigins("http://localhost:4200").AllowAnyHeader(); });
+    options.AddPolicy(name: corsPolicy, policy => { policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod(); });
 });
 
 builder.Services.AddAuthentication(options =>
@@ -50,7 +51,8 @@ builder.Services.AddAuthentication(options =>
      };
  });
 
-builder.Services.AddSingleton<PointService>();
+builder.Services.AddSingleton<INoteRepository, NoteRepository>();
+builder.Services.AddScoped<INoteService, NoteService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
