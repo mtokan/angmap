@@ -29,7 +29,7 @@ namespace angMapAPI.Controllers
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
 
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password)) 
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 var UserRoles = await _userManager.GetRolesAsync(user);
 
@@ -39,7 +39,7 @@ namespace angMapAPI.Controllers
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
-                foreach (var userRole in UserRoles) 
+                foreach (var userRole in UserRoles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                 }

@@ -32,6 +32,6 @@ namespace angMapAPI.Repositories
             return await _noteColleciton.Find(note => note.UserId == userId).Project(x => x.Feature).ToListAsync(); 
         }
 
-        public async Task<Note> Delete(string id) => await _noteColleciton.FindOneAndDeleteAsync(id);
+        public async Task<Note> Delete(string id) => await _noteColleciton.FindOneAndDeleteAsync(note => note.Id == id);
     }
 }

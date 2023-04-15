@@ -1,5 +1,4 @@
 ﻿using angMapAPI.Models;
-using angMapAPI.Repositories;
 using angMapAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +47,8 @@ namespace angMapAPI.Controllers
         {
             Note result = await _noteService.Delete(id);
 
-            return Ok();
+            return Ok(result);
         }
     }
+
 }

@@ -1,4 +1,7 @@
-﻿using System.Text.Json;
+﻿using angMapAPI.Helpers;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Attributes;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace angMapAPI.Models
@@ -14,12 +17,15 @@ namespace angMapAPI.Models
         [JsonPropertyName("properties")]
         public Properties? Properties { get; set; }
     }
+
     public class Geometry
     {
         [JsonPropertyName("type")]
         public string? Type { get; set; }
+
+        [BsonSerializer(typeof(CoordinatesSerializer))]
         [JsonPropertyName("coordinates")]
-        public List<double>? Coordinates { get; set; }
+        public JsonElement? Coordinates { get; set; }
     }
     public class Properties
     {
@@ -32,5 +38,4 @@ namespace angMapAPI.Models
         [JsonPropertyName("id")]
         public string? Id { get; set; }
     }
-
 }

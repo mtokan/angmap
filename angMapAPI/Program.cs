@@ -51,8 +51,7 @@ builder.Services.AddAuthentication(options =>
      };
  });
 
-builder.Services.AddSingleton<PointService>();
-builder.Services.AddSingleton<INoteRepository,NoteRepository>();
+builder.Services.AddSingleton<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<INoteService, NoteService>();
 
 builder.Services.AddControllers();
