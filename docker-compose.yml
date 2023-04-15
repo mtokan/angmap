@@ -21,7 +21,7 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://root:admin@mongo:27017/
 
   sql-db:
-    image: mcr.microsoft.com/azure-sql-edge:latest
+    image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       - "ACCEPT_EULA=1"
       - "MSSQL_SA_PASSWORD=P@ssw0rd!"

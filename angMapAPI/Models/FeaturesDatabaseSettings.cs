@@ -1,9 +1,8 @@
-﻿namespace angMapAPI.Models
+namespace angMapAPI.Models
 {
     public class FeaturesDatabaseSettings
     {
         public string ConnectionString { get; set; } = null!;
         public string DatabaseName { get; set; } = null!;
-        public string PointsCollectionName { get; set; } = null!;
     }
 }
