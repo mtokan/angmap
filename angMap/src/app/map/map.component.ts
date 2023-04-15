@@ -58,6 +58,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
 
 
+
     this.getAdministrativeFeatures();
     this.getNoteFeatures();
     this.initializeInteractions();
@@ -206,6 +207,7 @@ Type: ${feature.get('type_2')}`,
     })
   }
 
+
   private getNoteFeatures(){
     this.mapService.getNotes().subscribe(result => {
       let geoJsonFactory = new GeoJSON();
@@ -229,6 +231,7 @@ Type: ${feature.get('type_2')}`,
       type: 'Point'
     });
 
+
     this.deleteInteraction = new Select({
       layers: this.selectInteractionFilter
     });
@@ -245,6 +248,7 @@ Type: ${feature.get('type_2')}`,
       const dialogRef = this.dialog.open<SaveNoteDialogComponent,any,FormGroup>(SaveNoteDialogComponent, {disableClose: true});
       dialogRef.afterClosed().subscribe(result => {
         if(result){
+
           let geoJsonFactory = new GeoJSON();
           let createRequest = {
             geometry: JSON.parse(geoJsonFactory.writeGeometry(e.feature.getGeometry()!)),

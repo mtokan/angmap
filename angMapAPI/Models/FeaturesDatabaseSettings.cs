@@ -1,4 +1,4 @@
-﻿namespace angMapAPI.Models
+namespace angMapAPI.Models
 {
     public class FeaturesDatabaseSettings
     {

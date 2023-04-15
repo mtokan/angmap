@@ -6,11 +6,13 @@ import { BehaviorSubject } from 'rxjs';
 import { User } from '../models/user';
 import { Observable } from 'rxjs';
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
   private authUrl = environment.authenticationServer
+
   private userSubject: BehaviorSubject<User | null>;
   public user: Observable<User | null>;
 
@@ -30,5 +32,4 @@ export class AuthenticationService {
       return user;
     }));
   }
-
 }
