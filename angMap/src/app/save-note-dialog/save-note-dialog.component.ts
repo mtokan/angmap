@@ -25,7 +25,7 @@ export class SaveNoteDialogComponent implements OnInit {
       date: ['',[Validators.required]],
       note: ['',[Validators.required]]
     });
-  };
+  }
 
   get f(): {[key:string]: AbstractControl} {
     return this.form.controls;

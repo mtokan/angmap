@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
-
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Point } from '../models/point';
-import { SaveResponse } from '../models/saveResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +21,8 @@ export class MapService {
     return this.http.post(`${this.authUrl}/api/Note`, json, {headers:postHeaders});
   }
 
-  getNotes():Observable<Array<any>>{
-    return this.http.get<Array<any>>(`${this.authUrl}/api/Note/all`);
+  getNotes():Observable<Array<object>>{
+    return this.http.get<Array<object>>(`${this.authUrl}/api/Note/all`);
   }
 
   deleteNote(id: string){

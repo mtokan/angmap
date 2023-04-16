@@ -1,26 +1,26 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
-import { Feature, Map } from 'ol';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { Map } from 'ol';
 import { OSM } from 'ol/source';
-import {GeoJSON, WFS} from 'ol/format.js';
-import { Circle, Fill ,Stroke, Style, Text} from 'ol/style.js';
+import { GeoJSON } from 'ol/format.js';
+import { Circle, Fill ,Stroke, Style, Text } from 'ol/style.js';
 import TileLayer from 'ol/layer/Tile';
-import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector.js';
 import View from 'ol/View';
 import Select from 'ol/interaction/Select.js';
 import Draw from 'ol/interaction/Draw.js';
 import { MapService } from '../services/map.service';
-import { PrimeNGConfig } from 'primeng/api'
-import {getCenter, buffer, Extent} from 'ol/extent'
+import { getCenter, buffer, Extent } from 'ol/extent'
 import Interaction from 'ol/interaction/Interaction';
 import Layer from 'ol/layer/Layer';
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { SaveNoteDialogComponent } from '../save-note-dialog/save-note-dialog.component';
 import { ReadNoteDialogComponent } from '../read-note-dialog/read-note-dialog.component';
 import { AlertDialogComponent } from '../alert-dialog/alert-dialog.component';
-import { Point } from 'ol/geom';
 import VectorImageLayer from 'ol/layer/VectorImage';
+import { DialogConfig } from '@angular/cdk/dialog';
+import { Geometry } from 'ol/geom';
+import { FeatureLike } from 'ol/Feature';
 
 @Component({
   selector: 'app-map',
@@ -40,7 +40,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   public deleteInteraction!: Select
   public readInteraction!: Select
   public interactions: Interaction[] = []
-  public actionSelection: string = 'select';
+  public actionSelection = 'select';
   public actionPanelVisibility = false
   public form = this.formBuilder.group({
     firstLevel: true,
@@ -48,31 +48,26 @@ export class MapComponent implements OnInit, AfterViewInit {
     points: false,
   })
 
-  constructor(private mapService: MapService,private primengConfig: PrimeNGConfig,private formBuilder: FormBuilder,public dialog: MatDialog) {}
+  constructor(private mapService: MapService,private formBuilder: FormBuilder,public dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.primengConfig.ripple = true;
     this.initializeLayers();
     this.initializeMap();
   }
 
   ngAfterViewInit(): void {
-
-
-
     this.getAdministrativeFeatures();
     this.getNoteFeatures();
     this.initializeInteractions();
     this.setInteractionEventHandlers();
-
     this.changeInteraction(this.readInteraction);
   }
 
   public changeLayer(){
-    this.map.getLayers().getArray().map(x => {
-      if (x.getProperties()['layerId'] != 0  ) {
-        let a = this.form.get(x.getProperties()['layerId'])?.value as boolean;
-        x.setVisible(a);
+    this.map.getLayers().getArray().map(layer => {
+      if (layer.getProperties()['layerId'] != 0  ) {
+        const layerVisibilityStatus = this.form.get(layer.getProperties()['layerId'])?.value as boolean;
+        layer.setVisible(layerVisibilityStatus);
       }
     });
     if(this.form.controls.points.value){
@@ -94,7 +89,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     }
   }
 
-  firstLevelStyleFunction(feature:any){
+  firstLevelStyleFunction(feature:FeatureLike){
     return new Style({
         stroke: new Stroke({
           color: '#5C6BC0',
@@ -115,7 +110,7 @@ Type: ${feature.get('type_1')}`,
       })
   }
 
-  secondLevelStyleFunction(feature:any){
+  secondLevelStyleFunction(feature:FeatureLike){
     return new Style({
         stroke: new Stroke({
           color: '#EC407A',
@@ -211,7 +206,7 @@ Type: ${feature.get('type_2')}`,
 
   private getNoteFeatures(){
     this.mapService.getNotes().subscribe(result => {
-      let geoJsonFactory = new GeoJSON();
+      const geoJsonFactory = new GeoJSON();
       result.forEach(feature => {
         this.pointVectorSource.addFeature(geoJsonFactory.readFeature(feature));
       })
@@ -232,7 +227,6 @@ Type: ${feature.get('type_2')}`,
       type: 'Point'
     });
 
-
     this.deleteInteraction = new Select({
       layers: this.selectInteractionFilter
     });
@@ -246,36 +240,36 @@ Type: ${feature.get('type_2')}`,
 
   private setInteractionEventHandlers(){
     this.drawInteraction.on('drawend', e => {
-      const dialogRef = this.dialog.open<SaveNoteDialogComponent,any,FormGroup>(SaveNoteDialogComponent, {disableClose: true});
+      const dialogRef = this.dialog.open<SaveNoteDialogComponent,DialogConfig,FormGroup>(SaveNoteDialogComponent, {disableClose: true});
       dialogRef.afterClosed().subscribe(result => {
         if(result){
-
-          let geoJsonFactory = new GeoJSON();
-          let createRequest = {
-            geometry: JSON.parse(geoJsonFactory.writeGeometry(e.feature.getGeometry()!)),
+          const geoJsonFactory = new GeoJSON();
+          const createRequest = {
+            geometry: JSON.parse(geoJsonFactory.writeGeometry(e.feature.getGeometry() as Geometry)),
             title: result.value['title'],
             date: result.value['date'],
             note: result.value['note']
           }
           this.pointVectorSource.removeFeature(e.feature);
           this.mapService.saveNote(createRequest).subscribe(saveResult => {
-            e.feature.setProperties({'id':saveResult});
             this.pointVectorSource.addFeature(geoJsonFactory.readFeature(saveResult));
           });
+        } else {
+          this.pointVectorSource.removeFeature(e.feature);
         }
       })
     });
     
     this.deleteInteraction.on('select', e => {
       if(e.selected.length != 0){
-      const title = e.selected[0].getProperties()['title'];
       const dialogRef = this.dialog.open<AlertDialogComponent,string,boolean>(AlertDialogComponent,{disableClose: true,data: `Are you sure you want to delete this note?`});
       dialogRef.afterClosed().subscribe(result => {
         if(result){
-          this.mapService.deleteNote(e.selected[0].getProperties()['id']).subscribe( deleteResult => {
+          this.mapService.deleteNote(e.selected[0].getProperties()['id']).subscribe( () => {
             this.pointVectorSource.removeFeature(e.selected[0]);
           })
         }
+        this.deleteInteraction.getFeatures().clear();
       })}
     });
 
@@ -286,7 +280,7 @@ Type: ${feature.get('type_2')}`,
         const _note = e.selected[0].getProperties()['note'];
         
         const dialogRef = this.dialog.open(ReadNoteDialogComponent, {data: {title: _title, date: new Date(_date).toLocaleDateString(), note: _note}});
-        dialogRef.afterClosed().subscribe(result => this.readInteraction.getFeatures().clear());
+        dialogRef.afterClosed().subscribe(() => this.readInteraction.getFeatures().clear());
       }
     });
   }
