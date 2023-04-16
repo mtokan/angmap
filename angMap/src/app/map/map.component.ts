@@ -20,6 +20,7 @@ import { SaveNoteDialogComponent } from '../save-note-dialog/save-note-dialog.co
 import { ReadNoteDialogComponent } from '../read-note-dialog/read-note-dialog.component';
 import { AlertDialogComponent } from '../alert-dialog/alert-dialog.component';
 import { Point } from 'ol/geom';
+import VectorImageLayer from 'ol/layer/VectorImage';
 
 @Component({
   selector: 'app-map',
@@ -31,9 +32,9 @@ export class MapComponent implements OnInit, AfterViewInit {
   public firstLevelVectorSource!: VectorSource
   public secondLevelVectorSource!: VectorSource
   public pointVectorSource!: VectorSource
-  public firstLevelVectorLayer!: VectorLayer<VectorSource>
-  public secondLevelVectorLayer!: VectorLayer<VectorSource>
-  public pointVectorLayer!: VectorLayer<VectorSource>
+  public firstLevelVectorLayer!: VectorImageLayer<VectorSource>
+  public secondLevelVectorLayer!: VectorImageLayer<VectorSource>
+  public pointVectorLayer!: VectorImageLayer<VectorSource>
   public selectInteraction!: Select
   public drawInteraction!: Draw
   public deleteInteraction!: Select
@@ -140,7 +141,7 @@ Type: ${feature.get('type_2')}`,
     this.secondLevelVectorSource = new VectorSource();
     this.pointVectorSource = new VectorSource();
 
-    this.pointVectorLayer = new VectorLayer({
+    this.pointVectorLayer = new VectorImageLayer({
       properties: {'layerId': 'points'},
       source: this.pointVectorSource,
       visible: false,
@@ -158,14 +159,14 @@ Type: ${feature.get('type_2')}`,
       })
     });
     
-    this.firstLevelVectorLayer = new VectorLayer({
+    this.firstLevelVectorLayer = new VectorImageLayer({
       properties: {'layerId': 'firstLevel'},
       source: this.firstLevelVectorSource,
       visible: true,
       style: this.firstLevelStyleFunction
     });
 
-    this.secondLevelVectorLayer = new VectorLayer({
+    this.secondLevelVectorLayer = new VectorImageLayer({
       properties: {'layerId': 'secondLevel'},
       source: this.secondLevelVectorSource,
       visible: false,
